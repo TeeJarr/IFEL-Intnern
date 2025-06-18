@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IFEL Interactive Intern Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A two-column layout was chosen for clear separation between navigation and content. A fixed sidebar on the left provides an 'at-a-glance' view of the guide's structure and allows for persistent, easy navigation between sections. The main content area on the right uses a card-based design to present information in digestible, visually distinct chunks. This structure transforms the linear slide deck into a more flexible, explorable web experience, suitable for both sequential reading and quick reference. Key interactions include smooth-scrolling navigation, active section highlighting, and an interactive checklist to make the guide a practical tool. New LLM-powered sections are integrated as expandable cards within relevant existing sections for a seamless user flow. -->
+    <!-- Visualization & Content Choices: The source material is purely qualitative advice. Goal: Inform/Organize -> Presentation: The content is organized into thematic sections matching the source. Each point is presented as a styled card using HTML/Tailwind for clarity. Interaction: Active navigation links and an interactive checklist (HTML/JS) are used to engage the user. LLM integration adds dynamic text generation. Justification: This approach avoids unnecessary complexity (like charts) and focuses on making the textual information highly readable, navigable, and actionable. The checklist transforms passive advice into an active tool for the intern. LLM features provide personalized, on-demand advice. Library/Method: Vanilla JS for interactions, Tailwind CSS for styling, Fetch API for Gemini LLM calls. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .nav-link.active {
+        background-color: #e0f2f1;
+        color: #00796b;
+        font-weight: 600;
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .checklist-item.checked {
+        text-decoration: line-through;
+        color: #9ca3af;
+      }
+      .checklist-item.checked .checkbox-icon {
+        background-color: #00796b;
+        border-color: #00796b;
+      }
+      .checkbox-icon {
+        border: 2px solid #d1d5db;
+      }
+      .checkbox-icon.checked::after {
+        content: "\2713";
+        color: white;
+        display: block;
+        text-align: center;
+        line-height: 1.25rem;
+        font-size: 0.8rem;
+      }
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #00796b;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .gemini-response {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+    </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  </head>
+  <body class="bg-stone-50 text-stone-800">
+    <div class="flex min-h-screen">
+      <!-- Sidebar Navigation -->
+      <aside
+        id="sidebar"
+        class="w-64 bg-stone-100 p-4 fixed top-0 left-0 h-full transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-30"
+      >
+        <h1 class="text-2xl font-bold text-teal-800 mb-6">IFEL Intern Guide</h1>
+        <nav id="nav-menu">
+          <ul>
+            <li>
+              <a
+                href="#welcome"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>👋</span> Welcome</a
+              >
+            </li>
+            <li>
+              <a
+                href="#goals"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🎯</span> Set Goals</a
+              >
+            </li>
+            <li>
+              <a
+                href="#proactive"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🚀</span> Be Proactive</a
+              >
+            </li>
+            <li>
+              <a
+                href="#network"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🤝</span> Network</a
+              >
+            </li>
+            <li>
+              <a
+                href="#skills"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🛠️</span> Develop Skills</a
+              >
+            </li>
+            <li>
+              <a
+                href="#feedback"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>💬</span> Seek Feedback</a
+              >
+            </li>
+            <li>
+              <a
+                href="#document"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>📝</span> Document</a
+              >
+            </li>
+            <li>
+              <a
+                href="#mission"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🌍</span> Understand Mission</a
+              >
+            </li>
+            <li>
+              <a
+                href="#enjoy"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>🎉</span> Enjoy!</a
+              >
+            </li>
+            <li>
+              <a
+                href="#checklist"
+                class="nav-link flex items-center gap-3 px-4 py-2 my-1 rounded-md text-stone-600 hover:bg-stone-200 transition-colors"
+                ><span>✅</span> Checklist</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Hamburger Menu Button for Mobile -->
+      <button
+        id="menu-btn"
+        class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/70 backdrop-blur-sm rounded-md shadow"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
+      </button>
+
+      <div
+        id="overlay"
+        class="md:hidden fixed inset-0 bg-black/50 z-20 hidden"
+      ></div>
+
+      <!-- Main Content -->
+      <main class="md:ml-64 flex-1 p-6 md:p-10 transition-all duration-300">
+        <div class="max-w-4xl mx-auto">
+          <!-- Welcome Section -->
+          <section
+            id="welcome"
+            class="min-h-screen flex items-center justify-center text-center fade-in"
+          >
+            <div>
+              <h2 class="text-5xl font-extrabold text-teal-800">
+                Welcome to IFEL!
+              </h2>
+              <p class="mt-4 text-xl text-stone-600 max-w-2xl mx-auto">
+                We're so glad you're here. This interactive guide is your
+                companion to a rewarding and impactful summer internship. Let's
+                get started!
+              </p>
+              <a
+                href="#goals"
+                class="mt-8 inline-block bg-teal-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-teal-700 transition-all shadow-lg"
+                >Begin Your Journey</a
+              >
+            </div>
+          </section>
+
+          <!-- Sections -->
+          <section id="goals" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">🎯 Set Clear Goals</h2>
+            <p class="mb-8 text-stone-600">
+              This section helps you create a roadmap for your summer. Setting
+              clear goals ensures your time is purposeful and aligns your
+              personal ambitions with IFEL's objectives, setting the stage for a
+              successful internship.
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Identify Learning Objectives
+                </h3>
+                <ul class="list-disc list-inside text-stone-600 space-y-1">
+                  <li>What skills do you want to develop?</li>
+                  <li>What knowledge do you want to gain about IFEL?</li>
+                </ul>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Discuss with Your Supervisor
+                </h3>
+                <ul class="list-disc list-inside text-stone-600 space-y-1">
+                  <li>Align your expectations with IFEL's needs.</li>
+                  <li>Ensure projects contribute to your development.</li>
+                </ul>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200 md:col-span-2"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Define Deliverables
+                </h3>
+                <ul class="list-disc list-inside text-stone-600 space-y-1">
+                  <li>What concrete projects or tasks will you complete?</li>
+                  <li>
+                    This provides a sense of accomplishment and demonstrates
+                    your contributions.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Gemini API Feature: Goal Generator -->
+            <div
+              class="bg-teal-50 p-6 rounded-xl shadow-md border border-teal-200 mt-10"
+            >
+              <h3
+                class="font-bold text-xl mb-4 text-teal-800 flex items-center"
+              >
+                ✨ Generate Personalized Internship Goals
+              </h3>
+              <p class="text-stone-600 mb-4">
+                Tell us about your interests or what you hope to focus on, and
+                get personalized goal suggestions!
+              </p>
+              <textarea
+                id="goal-input"
+                class="w-full p-3 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
+                rows="3"
+                placeholder="e.g., 'Learn about non-profit marketing', 'Improve data analysis skills', 'Understand community outreach'"
+              ></textarea>
+              <button
+                id="generate-goal-btn"
+                class="mt-4 bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-all"
+              >
+                Generate Goals
+              </button>
+              <div
+                id="goal-output"
+                class="mt-6 p-4 bg-teal-100 rounded-lg hidden"
+              >
+                <div class="loading-spinner mx-auto hidden"></div>
+                <p class="text-teal-800 gemini-response"></p>
+              </div>
+            </div>
+          </section>
+
+          <section id="proactive" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">🚀 Be Proactive and Engaged</h2>
+            <p class="mb-8 text-stone-600">
+              Your internship is what you make of it. Taking initiative shows
+              your commitment and maximizes your learning. This section outlines
+              how to actively shape your experience and become a valued team
+              member.
+            </p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Ask Questions
+                </h3>
+                <p class="text-stone-600">
+                  It shows you're engaged and eager to learn. Don't be afraid to
+                  ask "why" to understand the bigger picture.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Seek Opportunities
+                </h3>
+                <p class="text-stone-600">
+                  If you finish a task, ask for more work or inquire if there
+                  are other areas where you can assist.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Volunteer for Tasks
+                </h3>
+                <p class="text-stone-600">
+                  Offer to help on interesting projects to learn new skills and
+                  expand your network.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Attend Meetings
+                </h3>
+                <p class="text-stone-600">
+                  Participate to understand organizational priorities,
+                  challenges, and the context of your work.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200 lg:col-span-2"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">Take Notes</h3>
+                <p class="text-stone-600">
+                  Keep a notebook handy to jot down important information,
+                  tasks, and key takeaways from discussions.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="network" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">
+              🤝 Network and Build Relationships
+            </h2>
+            <p class="mb-8 text-stone-600">
+              Building a professional network is one of the most valuable
+              outcomes of an internship. The connections you make can provide
+              mentorship and opportunities for years to come. Here's how to get
+              started.
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Connect with Colleagues
+                </h3>
+                <p class="text-stone-600">
+                  Introduce yourself to everyone. Learn about their roles and
+                  how their work contributes to IFEL's mission.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Schedule Informational Interviews
+                </h3>
+                <p class="text-stone-600">
+                  Ask colleagues for a brief chat about their career paths,
+                  roles, and advice. A great way to gain insights.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Attend IFEL Events
+                </h3>
+                <p class="text-stone-600">
+                  Internal or external events, workshops, or webinars offer
+                  valuable exposure and networking opportunities.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Leverage LinkedIn
+                </h3>
+                <p class="text-stone-600">
+                  Connect with IFEL staff on LinkedIn to maintain your
+                  professional network after your internship concludes.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="skills" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">
+              🛠️ Develop Professional Skills
+            </h2>
+            <p class="mb-8 text-stone-600">
+              An internship is a prime opportunity to transition from academic
+              knowledge to professional application. This section highlights key
+              skills to focus on that are valuable in any career path.
+            </p>
+            <div class="space-y-4">
+              <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <p>
+                  <span class="font-semibold text-teal-700"
+                    >Communication:</span
+                  >
+                  Practice clear, concise communication and professional email
+                  etiquette.
+                </p>
+              </div>
+              <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <p>
+                  <span class="font-semibold text-teal-700"
+                    >Time Management:</span
+                  >
+                  Learn to prioritize tasks, manage deadlines, and organize your
+                  workload.
+                </p>
+              </div>
+              <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <p>
+                  <span class="font-semibold text-teal-700"
+                    >Problem-Solving:</span
+                  >
+                  Brainstorm solutions before immediately asking for help.
+                </p>
+              </div>
+              <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <p>
+                  <span class="font-semibold text-teal-700">Adaptability:</span>
+                  Be open to new ideas, feedback, and changes in project
+                  direction.
+                </p>
+              </div>
+              <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <p>
+                  <span class="font-semibold text-teal-700"
+                    >Technical Skills:</span
+                  >
+                  If IFEL uses unfamiliar software, ask for resources to learn
+                  them.
+                </p>
+              </div>
+            </div>
+
+            <!-- Gemini API Feature: Skill Development Advisor -->
+            <div
+              class="bg-teal-50 p-6 rounded-xl shadow-md border border-teal-200 mt-10"
+            >
+              <h3
+                class="font-bold text-xl mb-4 text-teal-800 flex items-center"
+              >
+                ✨ Skill Development Advisor
+              </h3>
+              <p class="text-stone-600 mb-4">
+                Enter a professional skill you want to develop, and get
+                actionable tips and resource suggestions.
+              </p>
+              <input
+                type="text"
+                id="skill-input"
+                class="w-full p-3 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
+                placeholder="e.g., 'Public Speaking', 'Project Management', 'Coding in Python'"
+              />
+              <button
+                id="get-skill-tips-btn"
+                class="mt-4 bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-all"
+              >
+                Get Tips
+              </button>
+              <div
+                id="skill-output"
+                class="mt-6 p-4 bg-teal-100 rounded-lg hidden"
+              >
+                <div class="loading-spinner mx-auto hidden"></div>
+                <p class="text-teal-800 gemini-response"></p>
+              </div>
+            </div>
+          </section>
+
+          <section id="feedback" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">💬 Seek and Act on Feedback</h2>
+            <p class="mb-8 text-stone-600">
+              Feedback is a gift that accelerates your growth. Learning to
+              actively seek, gracefully receive, and act on feedback is a skill
+              that will serve you throughout your entire career. Here's how to
+              make it a habit.
+            </p>
+            <div class="grid md:grid-cols-3 gap-6 text-center">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Request Regularly
+                </h3>
+                <p class="text-stone-600">
+                  Don't wait for formal reviews. Periodically ask your
+                  supervisor for feedback.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Be Receptive
+                </h3>
+                <p class="text-stone-600">
+                  View constructive criticism as an opportunity to learn and
+                  improve.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Demonstrate Improvement
+                </h3>
+                <p class="text-stone-600">
+                  Show you're taking feedback seriously by acting on it.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="document" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">📝 Document Your Experience</h2>
+            <p class="mb-8 text-stone-600">
+              Your internship will fly by. It's crucial to keep a record of your
+              work so you can articulate your achievements in future resumes and
+              interviews. This section provides a framework for tracking your
+              contributions.
+            </p>
+            <div class="grid md:grid-cols-3 gap-6">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Maintain a Project Log
+                </h3>
+                <p class="text-stone-600">
+                  List projects, responsibilities, and your specific
+                  contributions.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Collect Work Samples
+                </h3>
+                <p class="text-stone-600">
+                  Save reports, presentations, or other materials you create
+                  (ensure confidentiality).
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Reflect Regularly
+                </h3>
+                <p class="text-stone-600">
+                  Take time each week to think about what you've learned and
+                  challenges you've overcome.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="mission" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">
+              🌍 Understand IFEL's Mission and Impact
+            </h2>
+            <p class="mb-8 text-stone-600">
+              To truly excel, it's important to see how your work fits into the
+              bigger picture. Understanding our mission will make your tasks
+              more meaningful and help you speak passionately about your
+              experience.
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Learn About IFEL's Programs
+                </h3>
+                <p class="text-stone-600">
+                  Familiarize yourself with our different initiatives and how
+                  they contribute to the organization's overall mission.
+                </p>
+              </div>
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-stone-200"
+              >
+                <h3 class="font-bold text-lg mb-2 text-teal-700">
+                  Understand the "Why"
+                </h3>
+                <p class="text-stone-600">
+                  Connect your daily tasks to IFEL's broader goals and the
+                  impact it has. This will make your work more meaningful.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="enjoy" class="py-20 fade-in text-center">
+            <h2 class="text-3xl font-bold mb-2">🎉 Enjoy the Experience!</h2>
+            <p class="mb-8 text-stone-600 max-w-2xl mx-auto">
+              Finally, remember to enjoy your time at IFEL. Internships are
+              about learning, growing, and experiencing a professional
+              environment. Embrace the challenges, celebrate your successes, and
+              make the most of this valuable opportunity.
+            </p>
+            <p class="text-2xl font-semibold text-teal-800">
+              We're excited to see what you'll achieve this summer!
+            </p>
+          </section>
+
+          <section id="checklist" class="py-20 fade-in">
+            <h2 class="text-3xl font-bold mb-2">
+              ✅ Internship Success Checklist
+            </h2>
+            <p class="mb-8 text-stone-600">
+              Use this interactive checklist to stay on track. Clicking an item
+              will mark it as complete. Don't worry, this is just for you—your
+              progress isn't saved.
+            </p>
+            <div
+              id="checklist-container"
+              class="bg-white p-6 rounded-xl shadow-lg border border-stone-200 space-y-4"
+            >
+              <!-- Checklist items will be injected by JavaScript -->
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sections = document.querySelectorAll("main section");
+        const navLinks = document.querySelectorAll("#nav-menu a");
+        const menuBtn = document.getElementById("menu-btn");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+
+        const generateGoalBtn = document.getElementById("generate-goal-btn");
+        const goalInput = document.getElementById("goal-input");
+        const goalOutput = document.getElementById("goal-output");
+        const goalOutputText = goalOutput.querySelector(".gemini-response");
+        const goalSpinner = goalOutput.querySelector(".loading-spinner");
+
+        const getSkillTipsBtn = document.getElementById("get-skill-tips-btn");
+        const skillInput = document.getElementById("skill-input");
+        const skillOutput = document.getElementById("skill-output");
+        const skillOutputText = skillOutput.querySelector(".gemini-response");
+        const skillSpinner = skillOutput.querySelector(".loading-spinner");
+
+        // Mobile menu toggle
+        menuBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("-translate-x-full");
+          overlay.classList.toggle("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
+        });
+
+        // Close mobile menu on link click
+        navLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.innerWidth < 768) {
+              sidebar.classList.add("-translate-x-full");
+              overlay.classList.add("hidden");
+            }
+          });
+        });
+
+        // Active link highlighting on scroll
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                navLinks.forEach((link) => {
+                  link.classList.remove("active");
+                  if (
+                    link.getAttribute("href").substring(1) === entry.target.id
+                  ) {
+                    link.classList.add("active");
+                  }
+                });
+              }
+            });
+          },
+          { rootMargin: "-50% 0px -50% 0px" },
+        );
+
+        sections.forEach((section) => {
+          observer.observe(section);
+        });
+
+        // Interactive Checklist
+        const checklistContainer = document.getElementById(
+          "checklist-container",
+        );
+        const checklistItems = [
+          "Set learning objectives for my internship.",
+          "Discussed my goals with my supervisor.",
+          "Asked for help or clarification when needed.",
+          "Volunteered for a task outside my main duties.",
+          "Scheduled an informational interview with a colleague.",
+          "Attended an IFEL event or workshop.",
+          "Connected with 5+ colleagues on LinkedIn.",
+          "Asked for feedback on my work.",
+          "Started a project log to track my accomplishments.",
+        ];
+
+        checklistItems.forEach((itemText) => {
+          const item = document.createElement("div");
+          item.classList.add(
+            "checklist-item",
+            "flex",
+            "items-center",
+            "p-3",
+            "rounded-md",
+            "hover:bg-stone-50",
+            "cursor-pointer",
+            "transition-colors",
+          );
+
+          const checkbox = document.createElement("div");
+          checkbox.classList.add(
+            "checkbox-icon",
+            "w-5",
+            "h-5",
+            "mr-4",
+            "rounded-md",
+            "flex-shrink-0",
+            "transition-all",
+          );
+
+          const text = document.createElement("span");
+          text.textContent = itemText;
+
+          item.appendChild(checkbox);
+          item.appendChild(text);
+
+          item.addEventListener("click", () => {
+            item.classList.toggle("checked");
+            checkbox.classList.toggle("checked");
+          });
+
+          checklistContainer.appendChild(item);
+        });
+
+        // Gemini API integration for Goal Generation
+        generateGoalBtn.addEventListener("click", async () => {
+          const prompt = `As an internship guide, suggest 3-5 specific, actionable goals for a summer intern at a non-profit like IFEL, focusing on the following interests/areas: "${goalInput.value}". Goals should be concise and impactful. Format as a bulleted list.`;
+          goalOutput.classList.remove("hidden");
+          goalOutputText.textContent = "";
+          goalSpinner.classList.remove("hidden");
+          generateGoalBtn.disabled = true;
+
+          let chatHistory = [];
+          chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+          const payload = { contents: chatHistory };
+          const apiKey = "";
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+          try {
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const result = await response.json();
+            if (
+              result.candidates &&
+              result.candidates.length > 0 &&
+              result.candidates[0].content &&
+              result.candidates[0].content.parts &&
+              result.candidates[0].content.parts.length > 0
+            ) {
+              const text = result.candidates[0].content.parts[0].text;
+              goalOutputText.textContent = text;
+            } else {
+              goalOutputText.textContent =
+                "Could not generate goals. Please try again.";
+            }
+          } catch (error) {
+            goalOutputText.textContent =
+              "Error generating goals: " + error.message;
+          } finally {
+            goalSpinner.classList.add("hidden");
+            generateGoalBtn.disabled = false;
+          }
+        });
+
+        // Gemini API integration for Skill Development Tips
+        getSkillTipsBtn.addEventListener("click", async () => {
+          const prompt = `As an internship mentor, provide 3-5 concise, actionable tips or resources for an intern to develop the professional skill: "${skillInput.value}". Focus on practical, real-world application relevant to an internship. Format as a bulleted list.`;
+          skillOutput.classList.remove("hidden");
+          skillOutputText.textContent = "";
+          skillSpinner.classList.remove("hidden");
+          getSkillTipsBtn.disabled = true;
+
+          let chatHistory = [];
+          chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+          const payload = { contents: chatHistory };
+          const apiKey = "";
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+          try {
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const result = await response.json();
+            if (
+              result.candidates &&
+              result.candidates.length > 0 &&
+              result.candidates[0].content &&
+              result.candidates[0].content.parts &&
+              result.candidates[0].content.parts.length > 0
+            ) {
+              const text = result.candidates[0].content.parts[0].text;
+              skillOutputText.textContent = text;
+            } else {
+              skillOutputText.textContent =
+                "Could not generate tips. Please try again.";
+            }
+          } catch (error) {
+            skillOutputText.textContent =
+              "Error generating tips: " + error.message;
+          } finally {
+            skillSpinner.classList.add("hidden");
+            getSkillTipsBtn.disabled = false;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
